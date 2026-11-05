@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Map /api/telemetry to /api/telemetry.php
+RewriteRule ^api/telemetry/?$ api/telemetry.php [L,QSA]
+
+# Prevent directory indexing
+Options -Indexes
+
+# Enable CORS for fonts & assets
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
