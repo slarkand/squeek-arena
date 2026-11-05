@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteBase /
 
+# Force HTTPS Redirect (Otomatis arahkan HTTP ke HTTPS)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # Map /api/telemetry to /api/telemetry.php
 RewriteRule ^api/telemetry/?$ api/telemetry.php [L,QSA]
 
