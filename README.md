@@ -1,5 +1,7 @@
 # 🐹 SQUEEK ARENA & STREAM COMPANION
 
+squeekchain-project: 5f9f2d19-c8e2-4080-9ab0-0ae55c5617b2
+
 > **Interactive Proof-of-Hamster Gaming, Stream Overlay HUD, Dynamic NFT Evolver & Autonomous SqueekFi Bot for Squeekchain.**
 
 Built strictly to answer the Squeekchain builder mandate:
