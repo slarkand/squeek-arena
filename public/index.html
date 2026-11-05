@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squeek Arena - Hamster-Powered Gaming & Stream Companion</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand-container">
+            <div class="brand-logo-icon">🐹</div>
+            <div>
+                <h1 class="brand-title">SQUEEK <span>ARENA</span></h1>
+                <div class="brand-subtitle">Proof-of-Hamster Gaming, Stream HUD & SqueekFi Suite</div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <!-- Audio Toggle -->
+            <button id="btn-toggle-audio" class="btn btn-secondary">🔊 Audio SFX</button>
+
+            <!-- OBS Overlay Popout -->
+            <button id="btn-open-obs-overlay" class="btn btn-secondary" title="Open OBS Browser Source Overlay Window">
+                📺 Popout OBS HUD
+            </button>
+
+            <!-- Faucet -->
+            <button id="btn-claim-faucet" class="btn btn-secondary" title="Claim 250 test SQK + 0.2 Sepolia ETH">
+                🚰 Faucet
+            </button>
+
+            <!-- Wallet Pill -->
+            <div class="wallet-badge-pill">
+                <span id="wallet-type-badge" class="badge" style="color: #ffd166; font-size: 11px;">Instant Burner</span>
+                <span id="wallet-address-display" style="color: #fff;">0x...</span>
+                <span id="wallet-sqk-balance" class="sqk-tag">1,000 SQK</span>
+                <span id="wallet-eth-balance" class="eth-tag">0.500 ETH</span>
+            </div>
+
+            <!-- Connect Injected Wallet -->
+            <button id="btn-connect-wallet" class="btn btn-primary">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Navigation Tab Bar -->
+    <nav class="nav-tab-bar" role="tablist">
+        <button class="nav-tab-btn active" data-tab="tab-cam-hud" role="tab" aria-selected="true">
+            📺 Hamster Cam HUD
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-derby" role="tab" aria-selected="false">
+            🏁 Squeek Derby Game
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-nft-studio" role="tab" aria-selected="false">
+            💎 Dynamic NFT Studio
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-squeekfi" role="tab" aria-selected="false">
+            🌾 SqueekFi Vault
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-bot" role="tab" aria-selected="false">
+            🤖 SqueekSentry Bot
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-ledger" role="tab" aria-selected="false">
+            📜 Tx Explorer & Ledger
+        </button>
+    </nav>
+
+    <!-- Main Content Panes -->
+    <main class="main-content">
+
+        <!-- TAB 1: HAMSTER CAM & STREAM HUD -->
+        <section id="tab-cam-hud" class="tab-content-pane active">
+            <div class="hud-grid">
+                
+                <!-- Left: Interactive WHEELY9000 Rig -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            🎥 LIVE WHEELY9000 STREAM COMPANION
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span id="telemetry-status" class="status-pill status-mining">Mining</span>
+                        </div>
+                    </div>
+
+                    <div class="cam-viewport-container">
+                        <div class="cam-live-indicator">
+                            <span class="blink-dot"></span> LIVE SQUEEKCAM
+                        </div>
+
+                        <canvas id="hamster-canvas"></canvas>
+
+                        <div class="cam-quick-cheer">
+                            <button id="btn-cheer-clicker" class="btn btn-primary pulse-btn">
+                                📣 Cheer Hamster (+35 RPM)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Block Mining Progress -->
+                    <div style="margin-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; font-family: var(--font-mono);">
+                            <span style="color: var(--text-muted);">Proof-of-Hamster Block Progress:</span>
+                            <span id="block-progress-text" style="color: var(--accent-cyan); font-weight: bold;">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="block-progress-fill" class="progress-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hamster Stamina -->
+                    <div style="margin-top: 6px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-family: var(--font-mono);">
+                            <span style="color: var(--text-muted);">Rodent Stamina:</span>
+                            <span style="color: var(--accent-yellow);">High Endurance</span>
+                        </div>
+                        <div class="progress-bar-container" style="height: 6px;">
+                            <div id="stamina-bar-fill" class="progress-bar-fill" style="background: var(--accent-yellow); width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Telemetry & Instant Treat Dispenser -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <!-- Telemetry Metrics Card -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">⚡ REAL-TIME TELEMETRY</div>
+                        </div>
+
+                        <!-- RPM Arc Gauge -->
+                        <div class="speedometer-arc-wrapper">
+                            <div class="gauge-dial">
+                                <div class="gauge-bg-arc"></div>
+                                <div id="rpm-gauge-needle" class="gauge-needle"></div>
+                            </div>
+                            <div style="text-align: center; margin-top: 4px;">
+                                <span id="telemetry-rpm" style="font-family: var(--font-heading); font-size: 38px; font-weight: bold; color: var(--accent-cyan);">180</span>
+                                <span style="font-family: var(--font-mono); font-size: 14px; color: var(--text-muted); margin-left: 4px;">RPM</span>
+                            </div>
+                        </div>
+
+                        <div class="telemetry-metrics-grid">
+                            <div class="metric-box">
+                                <div class="metric-label">Tread Speed</div>
+                                <div id="telemetry-speed" class="metric-val highlight-yellow">3.8 mph</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Mechanical Power</div>
+                                <div id="telemetry-power" class="metric-val">14.4 W</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">PoW Hashrate</div>
+                                <div id="telemetry-hashrate" class="metric-val highlight-cyan">261.0 KH/s</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Blocks Mined</div>
+                                <div id="telemetry-blocks" class="metric-val">57</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); text-align: right;">
+                            Cumulative Distance: <span id="telemetry-distance" style="color: #fff; font-weight: bold;">12,547 m</span>
+                        </div>
+                    </div>
+
+                    <!-- On-Chain Treat Dispenser (Sends Transactions!) -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🥜 ON-CHAIN TREAT DISPENSER</div>
+                            <span class="badge" style="background: rgba(0, 245, 212, 0.1); color: var(--accent-cyan); font-size: 11px; padding: 2px 8px; border-radius: 4px;">
+                                Sends Tx
+                            </span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+                            Broadcasting a treat transaction calls <code style="color: var(--accent-cyan);">TreatDispenser.sol</code>, overclocking the wheel and boosting the live stream mining rate!
+                        </p>
+
+                        <div class="treat-catalog-grid">
+                            <div class="treat-item-card">
+                                <div class="treat-icon">🌻</div>
+                                <div class="treat-name">Sunflower Seed</div>
+                                <div class="treat-boost">+15 RPM Boost</div>
+                                <button id="btn-feed-seed" class="btn btn-primary" style="width: 100%;">Feed (10 SQK)</button>
+                            </div>
+
+                            <div class="treat-item-card">
+                                <div class="treat-icon">🧀</div>
+                                <div class="treat-name">Cheddar Nibble</div>
+                                <div class="treat-boost">+35 RPM Boost</div>
+                                <button id="btn-feed-cheese" class="btn btn-primary" style="width: 100%;">Feed (25 SQK)</button>
+                            </div>
+
+                            <div class="treat-item-card">
+                                <div class="treat-icon">🍓</div>
+                                <div class="treat-name">Energy Berry</div>
+                                <div class="treat-boost">+60 RPM Boost</div>
+                                <button id="btn-feed-berry" class="btn btn-primary" style="width: 100%;">Feed (50 SQK)</button>
+                            </div>
+
+                            <div class="treat-item-card">
+                                <div class="treat-icon">🌰</div>
+                                <div class="treat-name">Golden Acorn</div>
+                                <div class="treat-boost">+100 RPM Overclock</div>
+                                <button id="btn-feed-acorn" class="btn btn-primary pulse-btn" style="width: 100%;">Feed (100 SQK)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SQUEEK DERBY GAME -->
+        <section id="tab-derby" class="tab-content-pane">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">🏁 SQUEEK DERBY - WHEEL-POWERED SPRINT BETTING</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span id="derby-phase-badge" class="phase-badge phase-betting">BETTING</span>
+                        <div style="font-family: var(--font-mono); font-size: 18px; color: var(--accent-cyan); font-weight: bold;">
+                            ⏱️ <span id="derby-timer">25s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2D Canvas Race Track -->
+                <div class="derby-track-wrapper">
+                    <canvas id="derby-track-canvas"></canvas>
+                </div>
+
+                <!-- Live Commentary Ticker -->
+                <div style="background: rgba(10, 14, 23, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 16px; font-family: var(--font-mono); font-size: 13px; color: var(--accent-yellow); margin-bottom: 20px;">
+                    🎙️ <span id="derby-commentary">Bets are open! Lock in your wager for Race #104.</span>
+                    <button id="btn-claim-derby-win" class="btn btn-primary pulse-btn" style="display: none; float: right; padding: 4px 12px; font-size: 12px;">
+                        Claim Winnings (Send Tx)
+                    </button>
+                </div>
+
+                <!-- Runner Selection Cards -->
+                <div class="panel-title" style="font-size: 17px; margin-bottom: 10px;">SELECT YOUR CHAMPION RUNNER:</div>
+                <div class="derby-runners-grid">
+                    <div class="runner-select-card selected" data-runner-id="0">
+                        <span class="runner-odds-tag">2.4x</span>
+                        <div style="font-size: 24px; margin-bottom: 4px;">🐹</div>
+                        <div style="font-family: var(--font-heading); font-size: 18px; font-weight: bold; color: var(--accent-orange);">#1 Pip Squeek</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">The Genesis Miner (High Stamina)</div>
+                    </div>
+
+                    <div class="runner-select-card" data-runner-id="1">
+                        <span class="runner-odds-tag">3.2x</span>
+                        <div style="font-size: 24px; margin-bottom: 4px;">⚡</div>
+                        <div style="font-family: var(--font-heading); font-size: 18px; font-weight: bold; color: var(--accent-cyan);">#2 Cyber Hammy</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Overclocked Cyborg (Nitro Bursts)</div>
+                    </div>
+
+                    <div class="runner-select-card" data-runner-id="2">
+                        <span class="runner-odds-tag">2.8x</span>
+                        <div style="font-size: 24px; margin-bottom: 4px;">👑</div>
+                        <div style="font-family: var(--font-heading); font-size: 18px; font-weight: bold; color: var(--accent-purple);">#3 Squeektoshi</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">PoW Pioneer (Late-Race Surge)</div>
+                    </div>
+
+                    <div class="runner-select-card" data-runner-id="3">
+                        <span class="runner-odds-tag">5.5x</span>
+                        <div style="font-size: 24px; margin-bottom: 4px;">🥜</div>
+                        <div style="font-family: var(--font-heading); font-size: 18px; font-weight: bold; color: var(--accent-pink);">#4 Whale Nibbler</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">DeFi Degenerate (High Volatility)</div>
+                    </div>
+                </div>
+
+                <!-- Betting Controls -->
+                <div style="display: flex; gap: 14px; align-items: center; background: rgba(10, 14, 23, 0.6); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+                    <div style="font-family: var(--font-heading); font-size: 16px; text-transform: uppercase;">Wager Amount:</div>
+                    <input type="number" id="derby-bet-amount" value="50" min="5" max="500" step="5" style="background: #090c14; border: 1px solid var(--border-color); color: #fff; padding: 10px 14px; border-radius: 6px; font-family: var(--font-mono); width: 140px; font-size: 16px;">
+                    <span style="font-family: var(--font-mono); color: var(--accent-cyan); font-weight: bold;">$SQK</span>
+
+                    <button id="btn-place-derby-bet" class="btn btn-primary pulse-btn" style="padding: 10px 24px; margin-left: auto;">
+                        🎟️ PLACE ON-CHAIN WAGER (SEND TX)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: DYNAMIC NFT STUDIO -->
+        <section id="tab-nft-studio" class="tab-content-pane">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">💎 DYNAMIC SQUEEK NFT EVOLVER</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="btn-mint-nft" class="btn btn-secondary">🐹 Mint New Genesis Hamster (50 SQK)</button>
+                        <button id="btn-export-nft-json" class="btn btn-secondary">💾 Export Metadata JSON</button>
+                    </div>
+                </div>
+
+                <div class="nft-studio-layout">
+                    <!-- Left: Generative Dynamic SVG Canvas -->
+                    <div class="nft-preview-frame" id="nft-svg-container">
+                        <!-- SVG injected by squeek-nft.js -->
+                    </div>
+
+                    <!-- Right: Attributes, Revolution Progress & Evolution Trigger -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h2 id="nft-card-name" style="font-family: var(--font-heading); font-size: 28px; text-transform: uppercase;">Pip Squeek #1337</h2>
+                            <span id="nft-card-tier" class="tier-badge tier-2">Tier 2: Cardio Cadet</span>
+                        </div>
+
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                            This NFT dynamically evolves on-chain as the physical WHEELY9000 accumulates revolutions! Each stage unlocks new accessories, trait scores, and mining multiplier boosts.
+                        </p>
+
+                        <!-- Evolution Progress -->
+                        <div class="glass-panel" style="background: rgba(10, 14, 23, 0.6); margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 13px;">
+                                <span style="color: var(--text-muted);">Revolutions Contributed:</span>
+                                <span id="nft-card-revs" style="color: var(--accent-cyan); font-weight: bold;">1,850 Revs</span>
+                            </div>
+
+                            <div class="progress-bar-container" style="height: 14px; margin: 10px 0;">
+                                <div id="nft-card-progress" class="progress-bar-fill" style="width: 56%;"></div>
+                            </div>
+
+                            <div id="nft-req-text" style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); text-align: right;">
+                                1,850 / 2,500 Revs for Cyber Squeek (56%)
+                            </div>
+                        </div>
+
+                        <!-- 4 Evolution Stages Preview -->
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px;">
+                            <div style="background: rgba(10, 14, 23, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 22px;">😴</div>
+                                <div style="font-size: 12px; font-weight: bold; margin-top: 4px; color: #e0a96d;">Tier 1: Sleepy</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">0 Revs</div>
+                            </div>
+                            <div style="background: rgba(10, 14, 23, 0.7); border: 1px solid var(--accent-orange); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 22px;">🏃</div>
+                                <div style="font-size: 12px; font-weight: bold; margin-top: 4px; color: #f77f00;">Tier 2: Cardio</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">500 Revs</div>
+                            </div>
+                            <div style="background: rgba(10, 14, 23, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 22px;">🤖</div>
+                                <div style="font-size: 12px; font-weight: bold; margin-top: 4px; color: #00f5d4;">Tier 3: Cyber</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">2,500 Revs</div>
+                            </div>
+                            <div style="background: rgba(10, 14, 23, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center;">
+                                <div style="font-size: 22px;">👑</div>
+                                <div style="font-size: 12px; font-weight: bold; margin-top: 4px; color: #ffd166;">Tier 4: God</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">10,000 Revs</div>
+                            </div>
+                        </div>
+
+                        <!-- Evolution Button -->
+                        <button id="nft-evolve-btn" class="btn btn-disabled" style="width: 100%; padding: 14px; font-size: 16px;" disabled>
+                            🔒 LOCKED (650 more revs needed)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SQUEEKFI VAULT -->
+        <section id="tab-squeekfi" class="tab-content-pane">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">🌾 SQUEEKFI - WHEEL RPM-INDEXED YIELD VAULT</div>
+                    <span class="badge" style="background: rgba(6, 214, 160, 0.15); color: var(--accent-green); padding: 4px 10px; border-radius: 4px; font-size: 12px; font-family: var(--font-mono);">
+                        Active Smart Contract
+                    </span>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;">
+                    SqueekFi directly converts the hamster's physical effort into decentralized finance yield! When the hamster sprints faster on the WHEELY9000, your APY spikes in real time.
+                </p>
+
+                <!-- Stats Strip -->
+                <div class="squeekfi-stats-strip">
+                    <div class="metric-box">
+                        <div class="metric-label">Live Dynamic APY</div>
+                        <div id="squeekfi-apr" class="metric-val highlight-cyan">84.0%</div>
+                        <div style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">Scales with live RPM</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Total Vault TVL</div>
+                        <div id="squeekfi-tvl" class="metric-val highlight-yellow">48,520 SQK</div>
+                        <div style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">Locked in pool</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Your Staked Position</div>
+                        <div id="squeekfi-user-staked" class="metric-val">250.0 SQK</div>
+                        <div style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">Earning continuous yield</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Pending Harvestable</div>
+                        <div id="squeekfi-pending-yield" class="metric-val" style="color: var(--accent-green);">4.8200 SQK</div>
+                        <div style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">Accumulating every sec</div>
+                    </div>
+                </div>
+
+                <!-- Staking & Harvest Action Bar -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Stake Section -->
+                    <div class="glass-panel" style="background: rgba(10, 14, 23, 0.6);">
+                        <div class="panel-title" style="font-size: 16px; margin-bottom: 12px;">📥 DEPOSIT & STAKE $SQK</div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="stake-amount-input" placeholder="Amount (e.g. 100)" min="10" style="background: #090c14; border: 1px solid var(--border-color); color: #fff; padding: 10px 14px; border-radius: 6px; font-family: var(--font-mono); width: 100%;">
+                            <button id="btn-stake-sqk" class="btn btn-primary" style="white-space: nowrap;">
+                                STAKE (SEND TX)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Harvest Section -->
+                    <div class="glass-panel" style="background: rgba(10, 14, 23, 0.6); display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div class="panel-title" style="font-size: 16px;">🍯 HARVEST YIELD</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Claim accumulated $SQK straight to your wallet.</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="squeekfi-harvest-btn" class="btn btn-primary pulse-btn">
+                                HARVEST (SEND TX)
+                            </button>
+                            <button id="btn-withdraw-sqk" class="btn btn-secondary">
+                                UNSTAKE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: SQUEEKSENTRY AUTONOMOUS BOT -->
+        <section id="tab-bot" class="tab-content-pane">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        🤖 SQUEEKSENTRY - AUTONOMOUS ON-CHAIN EVENT BOT
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="bot-status-badge" class="status-dot dot-idle"></span>
+                        <span id="bot-status-text" style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">
+                            STOPPED (STANDBY)
+                        </span>
+                        <button id="btn-toggle-bot" class="btn btn-primary pulse-btn" style="margin-left: 12px;">
+                            START SQUEEKSENTRY BOT
+                        </button>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                    SqueekSentry monitors real-time events on Squeekchain and automatically executes transactions on your behalf according to selected smart strategies.
+                </p>
+
+                <!-- Bot Metrics Strip -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px;">
+                    <div class="metric-box">
+                        <div class="metric-label">Automated Txs Dispatched</div>
+                        <div id="bot-tx-count" class="metric-val highlight-cyan">0</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Gas Consumed</div>
+                        <div id="bot-gas-count" class="metric-val">0k</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">$SQK Dispatched</div>
+                        <div id="bot-sqk-dispatched" class="metric-val highlight-yellow">0 SQK</div>
+                    </div>
+                </div>
+
+                <!-- Strategy Checkboxes -->
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; background: rgba(10, 14, 23, 0.7); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                        <input type="checkbox" id="check-bot-autofeed" checked style="accent-color: var(--accent-cyan); width: 16px; height: 16px;">
+                        <span><strong>Auto-Feeder (Emergency Stalling Guard):</strong> Automatically dispenses seeds if RPM drops below 95.</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                        <input type="checkbox" id="check-bot-compound" checked style="accent-color: var(--accent-cyan); width: 16px; height: 16px;">
+                        <span><strong>Yield Compounder:</strong> Automatically claims & restakes SqueekFi rewards on new BlockMined events.</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+                        <input type="checkbox" id="check-bot-sniper" style="accent-color: var(--accent-cyan); width: 16px; height: 16px;">
+                        <span><strong>Derby Sniper:</strong> Snipes best-odds runner in the final 4 seconds of race betting window.</span>
+                    </label>
+                </div>
+
+                <!-- Live Monospaced Terminal Output -->
+                <div class="terminal-window" id="bot-terminal-output">
+                    <!-- Lines appended dynamically by squeek-bot.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: ON-CHAIN TRANSACTION LEDGER -->
+        <section id="tab-ledger" class="tab-content-pane">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">📜 LIVE SQUEEKCHAIN TRANSACTION EXPLORER</div>
+                    <span class="badge" style="background: rgba(0, 245, 212, 0.1); color: var(--accent-cyan); font-size: 12px; padding: 4px 10px; border-radius: 4px; font-family: var(--font-mono);">
+                        Real-Time Verified Ledger
+                    </span>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                    Every treat cheer, derby wager, vault deposit, and NFT evolution dispatches a verifiable transaction onto the chain.
+                </p>
+
+                <div style="overflow-x: auto;">
+                    <table class="tx-table">
+                        <thead>
+                            <tr>
+                                <th>Tx Hash</th>
+                                <th>Method / Action</th>
+                                <th>From</th>
+                                <th>Gas Limit</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tx-ledger-tbody">
+                            <!-- Populated dynamically as txs are broadcast -->
+                            <tr class="tx-row">
+                                <td><a href="https://sepolia.etherscan.io/tx/0x8b50937a0928e08d6d2ff8a6a24190c107e95f3" target="_blank" class="tx-hash-link">0x8b50937a...e95f3</a></td>
+                                <td><span class="tx-method-badge">deployContract()</span></td>
+                                <td>0x708f...</td>
+                                <td>2,450,000</td>
+                                <td><span class="badge" style="color: var(--accent-green);">Confirmed</span></td>
+                                <td class="text-muted">Genesis Block</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/wheel-sim.js"></script>
+    <script src="js/web3-engine.js"></script>
+    <script src="js/squeek-derby.js"></script>
+    <script src="js/squeek-bot.js"></script>
+    <script src="js/squeek-nft.js"></script>
+    <script src="js/squeek-fi.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

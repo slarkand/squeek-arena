@@ -1,0 +1,22 @@
+{
+  "name": "squeek-arena",
+  "version": "1.0.0",
+  "description": "Interactive Squeekchain Stream Companion, Hamster Derby Racing Game, Autonomous Bot & Dynamic NFT Evolver",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "squeekchain",
+    "hamster",
+    "web3",
+    "defi",
+    "games",
+    "obs-overlay",
+    "dynamic-nft"
+  ],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}

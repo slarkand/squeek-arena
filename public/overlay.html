@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SqueekCam OBS Stream Overlay</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: transparent !important;
+            overflow: hidden;
+            font-family: 'Barlow Condensed', sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .obs-overlay-card {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(0, 245, 212, 0.4);
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 245, 212, 0.2);
+            min-width: 340px;
+        }
+
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .overlay-title {
+            font-size: 18px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .live-tag {
+            background: #ff0054;
+            color: #fff;
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 10px rgba(255, 0, 84, 0.7);
+        }
+
+        .blink {
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        .obs-stats-row {
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .stat-val {
+            font-size: 26px;
+            font-weight: bold;
+            line-height: 1.1;
+        }
+
+        .stat-cyan { color: #00f5d4; text-shadow: 0 0 10px rgba(0, 245, 212, 0.5); }
+        .stat-yellow { color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.5); }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f5d4, #ffd166);
+            width: 45%;
+            transition: width 0.3s ease;
+        }
+
+        .recent-alert-banner {
+            background: rgba(0, 245, 212, 0.1);
+            border-left: 3px solid #00f5d4;
+            padding: 6px 10px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: #ffd166;
+            border-radius: 0 4px 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="obs-overlay-card">
+        <div class="overlay-header">
+            <div class="overlay-title">
+                🐹 WHEELY9000 TELEMETRY
+            </div>
+            <div class="live-tag">
+                <span class="blink"></span> SQUEEKCAM
+            </div>
+        </div>
+
+        <div class="obs-stats-row">
+            <div class="stat-item">
+                <div class="stat-label">Wheel Speed</div>
+                <div class="stat-val stat-cyan"><span id="obs-rpm">180</span> <span style="font-size: 14px; color: #94a3b8;">RPM</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Velocity</div>
+                <div class="stat-val stat-yellow"><span id="obs-speed">3.8</span> <span style="font-size: 14px; color: #94a3b8;">MPH</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Blocks Mined</div>
+                <div class="stat-val"><span id="obs-blocks">57</span></div>
+            </div>
+        </div>
+
+        <div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #94a3b8;">
+                <span>Block Mining Progress</span>
+                <span id="obs-progress-text" style="color: #00f5d4; font-weight: bold;">45%</span>
+            </div>
+            <div class="progress-track">
+                <div id="obs-progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="recent-alert-banner" id="obs-alert-box">
+            <span>✨</span>
+            <span id="obs-alert-text">Chat just fed Sunflower Seed (+15 RPM)!</span>
+        </div>
+    </div>
+
+    <script>
+        // Connect to parent window or poll simulation
+        setInterval(() => {
+            if (window.opener && window.opener.squeekSimulator) {
+                const sim = window.opener.squeekSimulator;
+                document.getElementById('obs-rpm').textContent = Math.round(sim.rpm);
+                const speedMph = ((sim.rpm * sim.wheelCircumference * 60) / 1000 * 0.621371).toFixed(1);
+                document.getElementById('obs-speed').textContent = speedMph;
+                document.getElementById('obs-blocks').textContent = sim.blocksMined;
+                
+                const pct = Math.floor((sim.revsIntoCurrentBlock / sim.blockDifficulty) * 100);
+                document.getElementById('obs-progress-fill').style.width = `${pct}%`;
+                document.getElementById('obs-progress-text').textContent = `${pct}%`;
+            } else {
+                // Standalone simulated oscillation
+                const fakeRPM = Math.round(160 + Math.sin(Date.now() * 0.002) * 45);
+                document.getElementById('obs-rpm').textContent = fakeRPM;
+                document.getElementById('obs-speed').textContent = (fakeRPM * 0.022).toFixed(1);
+            }
+        }, 300);
+
+        // Listen for events if linked
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'squeek:alert') {
+                const box = document.getElementById('obs-alert-box');
+                document.getElementById('obs-alert-text').textContent = e.data.text;
+                box.style.animation = 'pulse 0.5s 2';
+            }
+        });
+    </script>
+</body>
+</html>
